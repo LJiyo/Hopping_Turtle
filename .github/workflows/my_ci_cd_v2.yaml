@@ -16,23 +16,26 @@ jobs:
 
         steps:
         - uses: actions/checkout@v5
+
         - name: Use Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v4 # setup-node does not use sparse-checkout
           with:
-            sparse-checkout:
-              hopping-turtle
             node-version: ${{ matrix.node-version }}
+        
+        - name: Navigate to hopping-turtle directory
+          run: cd hopping-turtle
 
         - name: Install Dependencies
-          run: npm ci
+          working-directory: ./hopping-turtle
+          run: npm install
 
         - name: Run Linter and Basic Tests (if present)
+          working-directory: ./hopping-turtle
           run: |
             npm run lint || true
             npm test || true
 
-        - name: Build Expo App
+        - name: Build Expo App (Check it compiles)
+          working-directory: ./hopping-turtle
           run:
-            npm start
-        #- name: Build Expo App (Preview)
-          #run: npx expo export 
+            npx expo export 
