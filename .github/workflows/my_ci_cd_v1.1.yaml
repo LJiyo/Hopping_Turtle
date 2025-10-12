@@ -13,6 +13,9 @@ jobs:
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4
+              with:
+                sparse-checkout:
+                  hopping-turtle 
             
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -27,5 +30,8 @@ jobs:
                 npm run lint || true
                 npm test || true
 
-            - name: Build Expo App (Preview)
-              run: npx expo export 
+            - name: Build Expo App
+              run:
+                npm start
+            #- name: Build Expo App (Preview)
+              #run: npx expo export 
