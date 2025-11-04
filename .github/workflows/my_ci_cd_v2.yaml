@@ -2,9 +2,9 @@ name: Hopping Turtle CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "Developer_Lars"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "Developer_Lars"]
 
 jobs:
   build:
