@@ -8,12 +8,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Sensors, { Coordinates } from "../utils/Sensors";
 import PaceEstimator from "../utils/PaceEstimator";
 import ETACalculator from "../utils/ETACalculator";
+import { UserInformationList } from "../dummy_data/UserInformationList";
 
 // View component
 import MapAppWidget from "../components/MapAppWidget";
 
 // Landing page
 export default function IndexScreen() {
+  const [selectedUser, setSelectedUser] = useState(UserInformationList[0]);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [prevLocation, setPrevLocation] = useState<Coordinates | null>(null);
   const [speed, setSpeed] = useState<number>(0);
@@ -21,7 +23,11 @@ export default function IndexScreen() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const destination = { latitude: -36.8485, longitude: 174.7633 }; // dummy destination value
+  const [destination, setDestination] = useState<Coordinates | null>(location);
+  //const destination = { latitude: -37.8485, longitude: 174.7633 }; // dummy destination value
+  const handleMapPress = (coords: { latitude: number; longitude: number }) => { // Make the destination the user-pressed location
+    setDestination(coords);
+  };
 
   // Request GPS data permissions from mobile device
   useEffect(() => {
@@ -41,7 +47,7 @@ export default function IndexScreen() {
 
   // Get user location and calculate distances and ETAs
   useEffect(() => {
-    if (location && prevLocation) {
+    if (location && prevLocation && destination) {
       const distance = Sensors.haversineDistance(
         prevLocation.latitude,
         prevLocation.longitude,
@@ -63,28 +69,67 @@ export default function IndexScreen() {
       setEta(etaResult);
     }
     setPrevLocation(location);
-  }, [location]);
+  }, [location, destination]);
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />; // Loading icon
+  if (loading) {
+    return (
+    <View style={styles.loading}>
+      <ActivityIndicator size="large" style={{ flex: 1 }} />
+      <Text>Fetching your current location...</Text>
+    </View>
+    );} // Loading icon
 
   return (
     // What the user sees. SafeAreaView keeps the content within device screen bounds for 
     // better user view without obstruction of e.g. rounded corners of hardware etc.
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>🏃 Hopping Turtle</Text>
+      <Text style={styles.header}>Hopping Turtle</Text>
       {errorMsg && <Text style={{ color: "red" }}>{errorMsg}</Text>}
-      {location && (
+
+      <Text>User: {selectedUser.name}</Text>
+      <Text>Preferred Pace: {selectedUser.preferredPace} m/s</Text>
+
+      <Text style={{marginTop:10}}>
+        {destination
+          ? `Destination set at: ${destination.latitude.toFixed(4)}, ${destination.longitude.toFixed(4)}`
+          : "Tap on the map to set your destination!"
+        }
+      </Text>
+      <Text>(A blue marker appears where tapped on the map)</Text>
+
+
+      {location ?(
         <>
-          <Text>Speed: {speed.toFixed(2)} m/s</Text>
-          <Text>ETA: {eta}</Text>
-          <MapAppWidget userLocation={location} destination={destination} />
-        </>
-      )}
+          <Text>Your Speed: {speed.toFixed(2)} m/s</Text>
+          <Text>ETA to Destination: {eta}</Text>
+
+          <MapAppWidget 
+            userLocation={location} 
+            userdestination={destination} 
+            onMapPress={handleMapPress}
+          />
+          </>
+          ) : (
+            <Text>Getting your location...</Text>
+          )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#f9f9f9" },
-  header: { fontSize: 22, fontWeight: "bold", marginBottom: 16 },
+  container: { 
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center", 
+    backgroundColor: "#f9f9f9" },
+
+  header: { 
+    fontSize: 22, 
+    fontWeight: "bold", 
+    marginBottom: 16 },
+
+  loading: { 
+    alignItems: "center", 
+    justifyContent: "center", 
+    height: 300 },
 });
