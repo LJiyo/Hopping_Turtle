@@ -1,10 +1,10 @@
-**# Hopping_Turtle**
+# Hopping_Turtle
 A project for the Mobile Systems class in AUT. The simple PoC will feature real-time pace-detection which updates a displayed ETA for users on a Navigation (Map) App. This ETA calculation is based on the user's walking pace (taken from the last 5 seconds) and uses the GPS data taken from the phone's sensors as well as the pinpointed destination on the map they have selected.
 
-**##Steps to Running the App**
+## Steps to Running the App
 **Note:** Make sure to install the mobile app - "Expo Go" from the appstore or playstore. This is where mobile testing was done in order to be able to view the app on the phone as well as access its sensors. As well, ensure that your device running this program and your mobile phone are connected to the SAME wifi.
 
-1) To run this app, run on the command line:
+1) To run this app, cd into "hopping-turtle", then run on the command line:
 "npx expo start"
 
 This command will start the app and generate a QR code on the command terminal, scan this QR code to be redirected to the Expo Go app and connect with the running instance of Hopping Turtle.
