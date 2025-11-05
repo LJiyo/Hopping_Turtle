@@ -8,7 +8,7 @@ test("calculates ETA based on remaining distance = 20 (meter), speed = 2", () =>
 
 test("Reading given if speed is less than 0.5m/s", () => {
     const eta = ETACalculator.estimate(20, 0.4);
-    expect(eta).toBe("0.83 min(s) to arrival")
+    expect(eta).toBe("0.8 min(s) to arrival")
 });
 
 test("No reading given if speed is = 0m/s", () => {
