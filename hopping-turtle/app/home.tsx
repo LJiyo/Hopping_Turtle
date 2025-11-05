@@ -56,7 +56,7 @@ export default function IndexScreen() {
         location.longitude
       );
 
-      const currentSpeed = PaceEstimator.calculate(distance, 5); // across the last 5 seconds
+      const currentSpeed = PaceEstimator.calculate(distance, 3); // across the last 3 seconds
       setSpeed(currentSpeed);
 
       const remaining = Sensors.haversineDistance(
