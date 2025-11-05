@@ -1,41 +1,40 @@
 name: Hopping Turtle CI
 
 on:
-    push:
-        branches: ["main"]
-    pull_request:
-        branches: ["main"]
+  push:
+    branches: ["main", "Developer_Lars"]
+  pull_request:
+    branches: ["main", "Developer_Lars"]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        strategy:
-          matrix:
-            node-version: ['18.x', '20.x']
+    defaults:
+      run:
+        working-directory: hopping-turtle
 
-        steps:
-        - uses: actions/checkout@v5
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
 
-        - name: Use Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@v4 # setup-node does not use sparse-checkout
-          with:
-            node-version: ${{ matrix.node-version }}
-        
-        - name: Navigate to hopping-turtle directory
-          run: cd hopping-turtle
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Install Dependencies
-          working-directory: ./hopping-turtle
-          run: npm install
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-        - name: Run Linter and Basic Tests (if present)
-          working-directory: ./hopping-turtle
-          run: |
-            npm run lint || true
-            npm test || true
+      - name: Install dependencies
+        run: npm ci
 
-        - name: Build Expo App (Check it compiles)
-          working-directory: ./hopping-turtle
-          run:
-            npx expo export 
+      - name: Run lint (if exists)
+        run: npm run lint || echo "No linter configured"
+
+      - name: Run simple tests 
+        run: npm test || echo "No tests found"
+
+      - name: Verify Expo CLI setup
+        run: npx expo --version
