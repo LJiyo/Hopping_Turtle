@@ -11,20 +11,21 @@ import ETACalculator from "../utils/ETACalculator";
 import { UserInformationList } from "../dummy_data/UserInformationList";
 
 // View component
-import MapAppWidget from "../components/MapAppWidget";
+import MapAppWidget from "../components/MapAppWidget"; // Contains the MapView
 
 // Landing page
 export default function IndexScreen() {
   const [selectedUser, setSelectedUser] = useState(UserInformationList[0]);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [prevLocation, setPrevLocation] = useState<Coordinates | null>(null);
+   const [destination, setDestination] = useState<Coordinates | null>(location);
+  //const destination = { latitude: -37.8485, longitude: 174.7633 }; // dummy destination value
+
   const [speed, setSpeed] = useState<number>(0);
   const [eta, setEta] = useState<string>("Calculating...");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [destination, setDestination] = useState<Coordinates | null>(location);
-  //const destination = { latitude: -37.8485, longitude: 174.7633 }; // dummy destination value
   const handleMapPress = (coords: { latitude: number; longitude: number }) => { // Make the destination the user-pressed location
     setDestination(coords);
   };
@@ -55,7 +56,7 @@ export default function IndexScreen() {
         location.longitude
       );
 
-      const currentSpeed = PaceEstimator.calculate(distance, 3);
+      const currentSpeed = PaceEstimator.calculate(distance, 5); // across the last 5 seconds
       setSpeed(currentSpeed);
 
       const remaining = Sensors.haversineDistance(
@@ -102,8 +103,8 @@ export default function IndexScreen() {
         <>
           <Text>Your Speed: {speed.toFixed(2)} m/s</Text>
           <Text>ETA to Destination: {eta}</Text>
-
           <MapAppWidget 
+            ref = {mapRef}
             userLocation={location} 
             userdestination={destination} 
             onMapPress={handleMapPress}

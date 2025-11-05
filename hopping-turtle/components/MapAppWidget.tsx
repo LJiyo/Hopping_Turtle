@@ -8,7 +8,7 @@ import { StyleSheet, View } from "react-native";
 interface MapProps { // relevant user information needed by the Model from Presenter i.e. under utils folder
   userLocation: { latitude: number; longitude: number };
   userdestination: { latitude: number; longitude: number };
-  onMapPress?: (coords: { latitude: number; longitude: number }) => void; // destination coordinates upon user tap on map
+  onMapPress?: (coords: { latitude: number; longitude: number }) => void; // destination coordinates upon user tap on map (function)
 }
 
 // Little Map displayed on screen
@@ -25,8 +25,9 @@ const MapAppWidget: React.FC<MapProps> = ({ userLocation, userdestination, onMap
       }}
       onPress={(e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
-        onMapPress && onMapPress({ latitude, longitude });
+        onMapPress && onMapPress({ latitude, longitude }); // function call if function exists
       }}
+      showsMyLocationButton={false}
     >
       {userLocation && <Marker coordinate={userLocation} title="You" />}
       {userdestination && <Marker coordinate={userdestination} title="Destination" pinColor="blue" />}
@@ -37,7 +38,7 @@ const MapAppWidget: React.FC<MapProps> = ({ userLocation, userdestination, onMap
 const styles = StyleSheet.create({
   map: {
     width: "90%",
-    height: 300,
+    height: 500,
     borderRadius: 12,
     marginTop: 20,
   },
